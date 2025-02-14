@@ -16,7 +16,7 @@ import lombok.extern.log4j.Log4j2;
 
 
 
-@Log4j2
+
 public class BertTokenizer implements Tokenizer {
 	private Context context;
 
@@ -75,7 +75,6 @@ public class BertTokenizer implements Tokenizer {
 	}
 
 	private Map<String, Integer> load_vocab(Context context,String vocab_file_name) throws IOException {
-		ClassLoader classloader = Thread.currentThread().getContextClassLoader();
 		InputStream file = context.getAssets().open(vocab_file_name);
 		return TokenizerUtils.generateTokenIdMap(file);
 	}
