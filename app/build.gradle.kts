@@ -93,6 +93,7 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
 
     implementation("ai.djl.huggingface:tokenizers:0.33.0")
+    implementation("org.tensorflow:tensorflow-lite:2.14.0")
 //
 //    implementation(platform("ai.djl:bom:0.33.0"))
 //

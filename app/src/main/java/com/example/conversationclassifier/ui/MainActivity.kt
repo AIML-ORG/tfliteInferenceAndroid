@@ -7,27 +7,58 @@ import android.widget.Button
 import androidx.activity.ComponentActivity
 import com.example.conversationclassifier.DJLTokenizer
 import com.example.conversationclassifier.R
-import java.nio.charset.Charset
+import com.example.conversationclassifier.TFLiteInferenceEngine
 
-val TAG ="ntag"
+val TAG = "ntag"
+
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
 
+    private var engine: TFLiteInferenceEngine? = null
+    private val seqLen = 512  // Set this to your model's expected sequence length
+
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-//        setContent {
-//            val chatViewModel: ChatViewModel = viewModel()
-//            ChatScreen(chatViewModel)
-//
-//        }
+
         val button: Button? = findViewById(R.id.button)
         button?.setOnClickListener {
+
+            // Load tokenizer
             val tokenizer: HuggingFaceTokenizer = DJLTokenizer.loadTokenizer(this)
-            Log.i(TAG, Charset.defaultCharset().toString())
-            val ids: LongArray? = tokenizer.encode("Hello how are you ?").ids
-            Log.i(TAG, ids.contentToString())
-            val decoded = tokenizer.decode(ids)
-            Log.i(TAG, decoded)
+
+            // Encode text
+            val encoded = tokenizer.encode("Hello how are you ?")
+            val ids: LongArray = encoded.ids
+            val attentionMask: LongArray = encoded.attentionMask
+
+            Log.i(TAG, "Token IDs: ${ids.contentToString()}")
+            Log.i(TAG, "Attention Mask: ${attentionMask.contentToString()}")
+
+            // Pad input_ids and attention_mask to seq_len
+            val paddedIds = LongArray(seqLen) { i -> if (i < ids.size) ids[i] else 0L }
+            val paddedMask = LongArray(seqLen) { i -> if (i < attentionMask.size) attentionMask[i] else 0L }
+
+            // Wrap in batch dimension
+            val inputIds2D = arrayOf(paddedIds)
+            val inputMask2D = arrayOf(paddedMask)
+
+            // Initialize engine if needed
+            if (engine == null) {
+                engine = TFLiteInferenceEngine(this, "model.tflite")
+            }
+
+            // Run inference
+            val output: Array<FloatArray> = engine!!.run(inputIds2D, inputMask2D)
+            Log.i(TAG, "Model output: ${output.contentDeepToString()}")
+
+            // Optional: decode tokens back to text
+            val decoded: String = tokenizer.decode(ids)
+            Log.i(TAG, "Decoded text: $decoded")
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        engine?.close()
     }
 }

@@ -13,9 +13,9 @@ import ai.djl.huggingface.tokenizers.HuggingFaceTokenizer;
 public class DJLTokenizer {
     public static HuggingFaceTokenizer loadTokenizer(Context context) throws Exception {
         // Copy from assets to internal storage
-        File file = new File(context.getFilesDir(), "all_conversations_tokenizer.json");
+        File file = new File(context.getFilesDir(), "electra_tokenizer.json");
         if (!file.exists()) {
-            try (InputStream is = context.getAssets().open("all_conversations_tokenizer.json");
+            try (InputStream is = context.getAssets().open("electra_tokenizer.json");
                  FileOutputStream fos = new FileOutputStream(file)) {
                 byte[] buffer = new byte[512];
                 int length;
