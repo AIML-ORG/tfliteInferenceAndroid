@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.AndroidViewModel
 import com.example.conversationclassifier.electra.BertTokenizer
-import lombok.extern.java.Log
+//import lombok.extern.java.Log
 
 class ChatViewModel(application: Application) : AndroidViewModel(application){
     val chatHistory = mutableStateListOf<Pair<String, String>>() // Stores messages

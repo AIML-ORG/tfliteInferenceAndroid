@@ -1,3 +1,5 @@
+import org.gradle.util.Path.path
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -15,7 +17,16 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        externalNativeBuild {
+            cmake {
+                path("src/main/cpp/CMakeLists.txt")
+                version = "3.22.1" // CMake version compatible with Android Studio
+            }
+        }
+
     }
+
+    ndkVersion = "22.1.7171670"
 
     buildTypes {
         release {
@@ -41,10 +52,11 @@ android {
     }
     sourceSets {
         getByName("main") {
+            jniLibs.srcDirs("src/main/jniLibs")
             java {
                 srcDirs(
                     "src\\main\\java",
-                    "src\\main\\java\\com\\example\\conversationclassifier\\2"
+                    "src\\main\\java\\com\\example\\conversationclassifier\\2", "src\\main\\java", "src\\main\\java\\2"
                 )
             }
             assets {
@@ -73,9 +85,22 @@ dependencies {
     implementation(libs.androidx.ui.text)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation (libs.androidx.compiler)
-    implementation (libs.lombok)
-    annotationProcessor (libs.lombok)
+//    implementation (libs.lombok)
+//    annotationProcessor (libs.lombok)
+    implementation (libs.androidx.foundation)
 
     // Local Storage (We will implement later)
     implementation(libs.androidx.datastore.preferences)
+
+    implementation("ai.djl.huggingface:tokenizers:0.33.0")
+//
+//    implementation(platform("ai.djl:bom:0.33.0"))
+//
+//    implementation("ai.djl:api")
+//    implementation("ai.djl.android:core")
+//    runtimeOnly("ai.djl.pytorch:pytorch-engine")
+//    runtimeOnly("ai.djl.android:pytorch-native")
+//    runtimeOnly("ai.djl.android:onnxruntime")
+
+//    implementation("org.jetbrains:tokenizers")
 }

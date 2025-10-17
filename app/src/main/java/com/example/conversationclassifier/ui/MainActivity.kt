@@ -1,22 +1,33 @@
 package com.example.conversationclassifier.ui
 
+import ai.djl.huggingface.tokenizers.HuggingFaceTokenizer
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import android.util.Log
+import android.widget.Button
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.conversationclassifier.ui.ChatScreen
-import com.example.conversationclassifier.viewmodel.ChatViewModel
+import com.example.conversationclassifier.DJLTokenizer
+import com.example.conversationclassifier.R
+import java.nio.charset.Charset
 
+val TAG ="ntag"
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
-        setContent {
-            val chatViewModel: ChatViewModel = viewModel()
-            ChatScreen(chatViewModel)
+        setContentView(R.layout.activity_main)
+//        setContent {
+//            val chatViewModel: ChatViewModel = viewModel()
+//            ChatScreen(chatViewModel)
+//
+//        }
+        val button: Button? = findViewById(R.id.button)
+        button?.setOnClickListener {
+            val tokenizer: HuggingFaceTokenizer = DJLTokenizer.loadTokenizer(this)
+            Log.i(TAG, Charset.defaultCharset().toString())
+            val ids: LongArray? = tokenizer.encode("Hello how are you ?").ids
+            Log.i(TAG, ids.contentToString())
+            val decoded = tokenizer.decode(ids)
+            Log.i(TAG, decoded)
         }
     }
 }
