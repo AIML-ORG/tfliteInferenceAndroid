@@ -43,20 +43,16 @@ public class TFLiteInferenceEngine {
      */
     public float[][] run(long[][] inputIds, long[][] attentionMask) {
         Object[] inputs = new Object[]{inputIds, attentionMask};
-
-        // Dynamically get output tensor shape
         int[] outputShape = tflite.getOutputTensor(0).shape();
         float[][] output = new float[outputShape[0]][outputShape[1]];
-
         Map<Integer, Object> outputs = new HashMap<>();
         outputs.put(0, output);
-
         tflite.runForMultipleInputsOutputs(inputs, outputs);
-
         return output;
     }
 
     public void close() {
-        if (tflite != null) tflite.close();
+        if (tflite != null)
+            tflite.close();
     }
 }
